@@ -65,9 +65,9 @@ Command:
 
 Results:
 
-- Creation of  vlan provider network and associated subnet
+    - Creation of  vlan provider network and associated subnet
 
- Change: cidr:   gateway_ip: to fit your env
+      Change: cidr: and  gateway_ip: to fit your env
 
 ## Instance creation and cloudinit examples
 
