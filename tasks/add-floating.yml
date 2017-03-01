@@ -1,0 +1,10 @@
+---
+  - name: add floating
+    os_floating_ip:
+           state: present
+           reuse: yes
+           server: "{{ name }}"
+           network: public-net
+          #  nat_destination: private-net
+           wait: true
+           timeout: 180

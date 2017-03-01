@@ -1,0 +1,56 @@
+- hosts: localhost
+  tasks:
+    - include: ./tasks/create-volume.yml
+    - name: "deploy instance provider-{{ segmentation }}-{{image}}"
+      os_server:
+            state: present
+            name: "provider-{{ segmentation }}-{{image}}"
+            image: "{{image}}"
+            flavor: m1.small
+            security_groups: admin
+            key_name: "{{keyname}}"
+            # auto_ip: yes
+            boot_from_volume: True
+            volume_size: 9
+            volumes: "volume-{{image}}"
+            nics:
+              - net-name: "provider-{{ segmentation }}-net"
+            userdata: |
+              #cloud-config
+              hostname: provider-{{ segmentation }}
+              fqdn: provider-{{ segmentation }}.lab.local
+              manage_etc_hosts: true
+              debug: true
+              package_upgrade: true
+              users:
+                - default
+                - name: stack
+                  sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+                  groups: wheel,adm
+                  ssh_pwauth: True
+                  ssh_authorized_keys:
+                    - {{IDRSAPUB}}
+                - name: root
+                  ssh_authorized_keys:
+                    - {{IDRSAPUB}}
+              ssh_pwauth: True
+              disable_root: false
+              chpasswd:
+                list: |
+                  root:toor
+                  stack:stack
+                expire: false
+              packages:
+                - tmux
+                - git
+              fs_setup:
+               - label: None
+                 filesystem: 'ext4'
+                 device: '/dev/vdc'
+                 partition: 'auto'
+
+              mounts:
+
+               - [ /dev/vdc, /volume-makina-{{image}}, "ext4", "defaults,noatime"]
+
+              mount_default_fields: [ None, None, "ext4", "defaults,noatime", "0","2" ]

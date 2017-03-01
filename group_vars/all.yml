@@ -1,0 +1,14 @@
+keyname: keyname
+IDRSAPUB : "pubk key here"
+os_auth_url: http://10.0.0.13:5000/v2.0
+os_project_name: admin
+os_username: admin
+os_password: password
+os_region: regionOne
+os_az: nova
+image: fedora25-server
+netname: flat
+provider-net: vlan-150
+cidr_provider_net: 10.2.150.0/24
+provider_phys: provider
+segmentation: 150

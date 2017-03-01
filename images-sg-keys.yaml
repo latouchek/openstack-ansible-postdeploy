@@ -1,0 +1,56 @@
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    # - name: authenticate
+    #   os_auth:
+    #    auth:
+    #      auth_url: "{{ os_auth_url }}"
+    #      username: "{{ os_username }}"
+    #      password: "{{ os_password }}"
+    #      project_name: "{{ os_project_name }}"
+
+    - name: "Create flavors"
+      os_nova_flavor: state={{ item.state }} name={{ item.name }} ram={{ item.ram }} vcpus={{ item.vcpus }} disk={{ item.disk }} ephemeral={{ item.ephemeral }} flavorid={{ item.flavorid }}
+      with_items:
+        - { state: 'present', name: 'm1.small' , ram: '512' , vcpus: '1' , disk: '0' , ephemeral: '1' , flavorid: '1' }
+        - { state: 'present', name: 'm1.fat' , ram: '51200' , vcpus: '16' , disk: '0' , ephemeral: '15' , flavorid: '2' }
+        - { state: 'present', name: 'm1.medium' , ram: '1024' , vcpus: '4' , disk: '0' , ephemeral: '5' , flavorid: '3' }
+        - { state: 'present', name: 'm1.large' , ram: '2048' , vcpus: '8' , disk: '0' , ephemeral: '5' , flavorid: '4' }
+
+    - name: Create admin security group
+      os_security_group:
+        state: present
+        name: admin
+    - name: Allow any ICMP
+      os_security_group_rule:
+        security_group: admin
+        protocol: icmp
+        remote_ip_prefix: 0.0.0.0/0
+    - name: Allow any SSH connection
+      os_security_group_rule:
+        security_group: admin
+        protocol: tcp
+        port_range_min: 22
+        port_range_max: 22
+        remote_ip_prefix: 0.0.0.0/0
+    - name: Create keypair
+      os_keypair:
+          state: present
+          name: "{{keyname}}"
+          public_key_file: "{{ '~' | expanduser }}/.ssh/authorized_keys"
+    - name: Download and create  images
+      include: ./tasks/upload-images.yaml
+      with_items:
+        - { url: 'https://download.fedoraproject.org/pub/fedora/linux/releases/25/CloudImages/x86_64/images/Fedora-Cloud-Base-25-1.3.x86_64.qcow2', dest: '/tmp/fedora25-server' , imagename: 'fedora25-server'}
+        - { url: 'https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2', dest: '/tmp/centos7-server', imagename: 'centos7-server'}
+        - { url: 'http://cdimage.debian.org/cdimage/openstack/current/debian-8.7.1-20170215-openstack-amd64.qcow2.index', dest: '/tmp/debian-8-server', imagename: 'debian-8-server'}
+        - { url: 'https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img', dest: '/tmp/xenial-server', imagename: 'xenial-server'}
+    - name: Upload rhel image to openstack
+      os_image:
+          name: rhel7.3
+          container_format: bare
+          disk_format: qcow2
+          is_public: yes
+          state: present
+          filename: ./files/rhel7-guest-official.qcow2

@@ -1,0 +1,14 @@
+[hosts]
+kvm-host
+[installer]
+undercloud
+[reposerver]
+reposerver-aptilo
+[controllers]
+overcloud-controller-0
+overcloud-controller-1
+overcloud-controller-2
+[compute]
+overcloud-compute-0
+overcloud-compute-1
+overcloud-compute-2

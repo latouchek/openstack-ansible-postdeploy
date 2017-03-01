@@ -1,0 +1,12 @@
+---
+    - name: Download  {{ item.imagename }} images
+      get_url: url={{ item.url }} dest={{ item.dest }}
+
+    - name: Upload {{ item.imagename }} to openstack
+      os_image:
+          name: '{{ item.imagename }}'
+          container_format: bare
+          disk_format: qcow2
+          state: present
+          is_public: yes
+          filename: '/tmp/{{ item.imagename }}'

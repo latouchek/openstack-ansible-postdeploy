@@ -1,0 +1,53 @@
+- hosts: localhost
+  tasks:
+    - name: Create public network
+      os_network:
+        state: present
+        name: public-net
+        external: True
+        shared: True
+        provider_network_type: flat
+        provider_physical_network: datacentre
+        # provider_segmentation_id: 1
+    - name: Create public subnet
+      os_subnet:
+        state: present
+        network_name: public-net
+        name: public-subnet
+        ip_version: 4
+        cidr: 10.0.0.0/24
+        gateway_ip: 10.0.0.1
+        enable_dhcp: yes
+        allocation_pool_start: 10.0.0.51
+        allocation_pool_end: 10.0.0.250
+        dns_nameservers:
+          - 10.0.0.1
+    - name: Create private network
+      os_network:
+        state: present
+        name: "{{ netname }}-net"
+        external: False
+        shared: False
+
+    - name: Create subnet
+      os_subnet:
+        state: present
+        network_name: "{{ netname }}-net"
+        name: "{{ netname }}-subnet"
+        ip_version: 4
+        cidr: 10.13.0.0/24
+        gateway_ip: 10.13.0.1
+        enable_dhcp: yes
+        dns_nameservers:
+          - 8.8.8.8
+
+    - name: Create  router
+      ignore_errors: yes
+      os_router:
+        state: present
+        name: my-router
+        network: public-net
+        external_fixed_ips:
+          - subnet: public-subnet
+        interfaces:
+          - "{{ netname }}-subnet"

@@ -1,0 +1,25 @@
+- hosts: localhost
+  tasks:
+    - name: Create provider network
+      os_network:
+        state: present
+        name: "provider-{{ segmentation }}-net"
+        external: True
+        shared: True
+        provider_network_type: vlan
+        provider_segmentation_id: "{{ segmentation }}"
+        provider_physical_network: "{{provider_phys}}"
+    - name: Create provider-{{ segmentation }} subnet
+      os_subnet:
+        state: present
+        network_name: "provider-{{ segmentation }}-net"
+        name: "provider-{{ segmentation }}-subnet"
+        ip_version: 4
+        cidr: "{{cidr_provider_net}}"
+        gateway_ip: "10.2.{{ segmentation }}.1"
+        enable_dhcp: yes
+        dns_nameservers:
+          - 8.8.8.8
+        host_routes:
+         - destination: 0.0.0.0/0
+           nexthop: 10.2.0.1
