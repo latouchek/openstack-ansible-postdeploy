@@ -9,13 +9,14 @@ A set of post deployment playbooks to complete overcloud installation in my test
 
 Vyos router config:
 
-eth0 : default libvirt network
-eth1 :  OVS switch trunked port
-       10.2.0.1   
-       Vif 150  Vlan 150 address 10.2.150.1/24
-       Vif 151  Vlan 151 address 10.2.151.1/24
-       Vif 152  Vlan 152 address 10.2.152.1/24
-       Vif 153  Vlan 153 address 10.2.153.1/24
+    eth0 : default libvirt network
+
+    eth1 :  OVS switch trunked port
+            10.2.0.1   
+            Vif 150  Vlan 150 address 10.2.150.1/24
+            Vif 151  Vlan 151 address 10.2.151.1/24
+            Vif 152  Vlan 152 address 10.2.152.1/24
+            Vif 153  Vlan 153 address 10.2.153.1/24
 
 ### Requirements
 
