@@ -51,18 +51,25 @@ Results:
     - Creation of private network and subnet
     - creation of a router with one leg in each of the nets  create earlier
 
-ansible-playbook images-sg-keys.yaml
+command: ansible-playbook images-sg-keys.yaml
 
-    - Creates  flavors, images, security groups and keys
+Results:
 
-ansible-playbook create-provider-network-vlan.yaml  --extra-vars="segmentation=x"
+    - Creation of   flavors, images, security groups and keys
 
-    - Create vlan provider network and associated subnet
+command: ansible-playbook create-provider-network-vlan.yaml  --extra-vars="segmentation=x"
 
-     Change: cidr:   gateway_ip: to fit your env
+Results:
+
+    - Creation of  vlan provider network and associated subnet
+
+      Change: "cidr:", "segmentation" and "gateway_ip:" to fit your env
 
 ## Instance creation and cloudinit examples
-ansible-playbook instance-provider.yaml
+
+command: ansible-playbook instance-provider.yaml
+
+Results:
 
     - Create instances connected to provider network with volume attached, formated and mounted  
-    - Cloudinit is beiing used to set hostname, create users inject ssh keys, format and mount  volume
+    - Cloudinit is being used to set hostname, create users inject ssh keys, format and mount volume
